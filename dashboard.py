@@ -19,18 +19,23 @@ df = df.dropna()
 
 
 # %%
-df.info()
+# df.info()
 df.columns = df.columns.str.strip()
 numeric_columns = ['x dimension', 'y dimension', 'z dimension', 'depth', 'price', 'table']
 df[numeric_columns] = df[numeric_columns].apply(pd.to_numeric, errors='coerce')
 df['clarity'] = df['clarity'].astype("string")
 df['clarity'] = df['clarity'].str.upper()
 df['color'] = df['color'].astype("string")
+df['color'] = df['color'].str.upper()
 df['cut'] = df['cut'].astype("string")
 df['cut'] = df['cut'].str.upper()
-df = df.dropna(axis=0, subset=['x dimension', 'y dimension', 'z dimension', 'depth', 'price'])
-df['price'] = df['price'].astype("int64")
-# df.info()
+df = df.sort_values("price")
+df['carat'].fillna(method='ffill', inplace=True)
+df['price'].fillna(method='ffill', inplace=True)
+df['table'].fillna(method='bfill', inplace=True)
+# df = df.dropna(axis=0, subset=['x dimension', 'y dimension', 'z dimension', 'depth', 'price'])
+# df['price'] = df['price'].astype("int64")
+df.info()
 # df
 
 # %%
@@ -58,12 +63,20 @@ df['cut'].describe()
 st.header("PAD Projekt")
 st.dataframe(df)
 
-st.subheader("Liczba wystąpień w podziale na cięcie")
-how_many_of_each_cut = df['cut'].value_counts()
-how_many_of_each_cut.plot(kind='bar', color='skyblue', edgecolor='black')
-st.bar_chart(how_many_of_each_cut)
+selected_column = st.selectbox("Wybierz kolumnę do wyświetlenia", df.columns)
 
-st.subheader("Liczba wystąpień w podziale na przejzystosc")
-how_many_of_each_clarity = df['clarity'].value_counts()
-how_many_of_each_clarity.plot(kind='bar', color='skyblue', edgecolor='black')
-st.bar_chart(how_many_of_each_clarity)
+st.subheader(f"Liczba wystąpień w podziale na {selected_column}")
+how_many_of_each_column = df[selected_column].value_counts()
+how_many_of_each_column.plot(kind='bar', color='skyblue', edgecolor='black')
+st.bar_chart(how_many_of_each_column)
+
+selected_column_x = st.selectbox("Wybierz kolumnę do wyświetlenia na osi x", df.columns)
+selected_column_y = st.selectbox("Wybierz kolumnę do wyświetlenia na osi y", df.columns)
+
+st.subheader(f"Histogram {selected_column_x} do {selected_column_y}")
+st.scatter_chart(data=df,x=selected_column_x, y=selected_column_y)
+
+
+
+#ilosciowe wg wszystkich 
+#rozklad carat i percentage/ color i clarity/ color i 
