@@ -2,7 +2,8 @@
 import pandas as pd
 import streamlit as st
 import numpy as np
-import matplotlib
+import matplotlib.pyplot as plt
+import seaborn as sns
 df = pd.read_csv('messy_data.csv')
 
 # %%
@@ -76,7 +77,9 @@ selected_column_y = st.selectbox("Wybierz kolumnę do wyświetlenia na osi y", d
 st.subheader(f"Histogram {selected_column_x} do {selected_column_y}")
 st.scatter_chart(data=df,x=selected_column_x, y=selected_column_y)
 
+st.subheader("Wykres regresji price do wybranej zmiennej")
+selected_column_reg = st.selectbox("Wybierz zmienną do wyświetlenia na osi y", df.columns)
 
-
-#ilosciowe wg wszystkich 
-#rozklad carat i percentage/ color i clarity/ color i 
+fig, ax = plt.subplots()
+sns.regplot(data=df, x="price", y=selected_column_reg, ax=ax)
+st.pyplot(fig)
